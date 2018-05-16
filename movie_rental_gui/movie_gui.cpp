@@ -106,13 +106,17 @@ void MainWindow::init_gui()
 	// shopping cart buttons
 	QGroupBox* shopping_cart_buttons = new QGroupBox("SHOPPING CART");
 	shopping_cart_buttons->setAlignment(Qt::AlignCenter);
-	QHBoxLayout* shopping_cart_buttons_layout = new QHBoxLayout;
+	QVBoxLayout* shopping_cart_buttons_layout = new QVBoxLayout;
 	shopping_cart_buttons->setLayout(shopping_cart_buttons_layout);
-	shopping_cart_buttons_layout->addWidget(button_shopping_cart_add = new QPushButton("Add"));
-	shopping_cart_buttons_layout->addWidget(button_shopping_cart_delete = new QPushButton("Delete"));
-	shopping_cart_buttons_layout->addWidget(button_shopping_cart_empty = new QPushButton("Empty"));
-	shopping_cart_buttons_layout->addWidget(button_shopping_cart_generate_random = new QPushButton("Generate random"));
-	shopping_cart_buttons_layout->addWidget(button_shopping_cart_show = new QPushButton("Show"));
+	QHBoxLayout* shopping_cart_buttons_layout_first_row = new QHBoxLayout;
+	QHBoxLayout* shopping_cart_buttons_layout_second_row = new QHBoxLayout;
+	shopping_cart_buttons_layout->addLayout(shopping_cart_buttons_layout_first_row);
+	shopping_cart_buttons_layout->addLayout(shopping_cart_buttons_layout_second_row);
+	shopping_cart_buttons_layout_first_row->addWidget(button_shopping_cart_add = new QPushButton("Add"));
+	shopping_cart_buttons_layout_first_row->addWidget(button_shopping_cart_delete = new QPushButton("Delete"));
+	shopping_cart_buttons_layout_first_row->addWidget(button_shopping_cart_empty = new QPushButton("Empty"));
+	shopping_cart_buttons_layout_second_row->addWidget(button_shopping_cart_generate_random = new QPushButton("Generate random"));
+	shopping_cart_buttons_layout_second_row->addWidget(button_shopping_cart_show = new QPushButton("Show"));
 
 	rhs_layout->addWidget(shopping_cart_buttons);
 }
