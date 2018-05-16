@@ -13,6 +13,7 @@ private:
 	bool is_in_shopping_cart;
 public:
 	Movie(const unsigned int id, const std::string& title, const std::string& genre, const std::string& actor, const unsigned int release_year) noexcept;
+	Movie(const unsigned int id, const std::string& title, const std::string& genre, const std::string& actor, const unsigned int release_year, const unsigned int is_in_shopping_cart) noexcept;
 	unsigned int get_id() const noexcept;
 	unsigned int set_id(const unsigned int new_id) noexcept;
 	std::string get_title() const noexcept;

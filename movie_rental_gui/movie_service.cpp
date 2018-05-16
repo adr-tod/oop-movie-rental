@@ -182,7 +182,7 @@ void MovieService::movie_generate_random_cart()
 
 	// how many random movies will be added to shopping cart
 	std::mt19937 mt{ std::random_device{}() };
-	const std::uniform_int_distribution<> dist(1, (int)repository->size());
+	const std::uniform_int_distribution<> dist(1, (int)repository_size);
 	unsigned int how_many = dist(mt);
 
 	// add how_many random movies to cart

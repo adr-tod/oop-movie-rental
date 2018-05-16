@@ -1,6 +1,12 @@
 #include "movie.h"
 
-Movie::Movie(const unsigned int id, const std::string& title, const std::string& genre, const std::string& actor, const unsigned int release_year) noexcept : id{ id }, title{ title }, genre{ genre }, actor{ actor }, release_year{ release_year }, is_in_shopping_cart{ false } {}
+Movie::Movie(const unsigned int id, const std::string& title, const std::string& genre, const std::string& actor, const unsigned int release_year) noexcept : id{ id }, title{ title }, genre{ genre }, actor{ actor }, release_year{ release_year }, is_in_shopping_cart{ false } 
+{
+}
+
+Movie::Movie(const unsigned int id, const std::string & title, const std::string & genre, const std::string & actor, const unsigned int release_year, const unsigned int is_in_shopping_cart) noexcept : id{ id }, title{ title }, genre{ genre }, actor{ actor }, release_year{ release_year }, is_in_shopping_cart{ (bool)is_in_shopping_cart }
+{
+}
 
 unsigned int Movie::get_id() const noexcept
 {
