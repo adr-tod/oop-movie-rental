@@ -70,7 +70,7 @@ void MovieRepositoryFile::load_from_file()
 	if (fin.is_open() == false)
 		throw RepositoryException("Failed to open file!");
 	MovieRepository::clear();
-	std::string id, title, genre, actor, year;
+	std::string id, title, genre, actor, year, in; // in = is_in_shopping_cart
 	while (!fin.eof())
 	{
 		std::getline(fin, id, ',');
@@ -78,8 +78,9 @@ void MovieRepositoryFile::load_from_file()
 		std::getline(fin, title, ',');
 		std::getline(fin, genre, ',');
 		std::getline(fin, actor, ',');
-		std::getline(fin, year);
-		Movie m{ (unsigned int)std::stoi(id), title, genre, actor, (unsigned int)std::stoi(year) };
+		std::getline(fin, year, ',');
+		std::getline(fin, in);
+		Movie m{ (unsigned int)std::stoi(id), title, genre, actor, (unsigned int)std::stoi(year), (unsigned int)std::stoi(in) };
 		MovieRepository::store(m);
 	}
 	fin.close();
@@ -98,7 +99,8 @@ void MovieRepositoryFile::save_to_file()
 		fout << m.get_title() << ',';
 		fout << m.get_genre() << ',';
 		fout << m.get_actor() << ',';
-		fout << m.get_release_year() << std::endl;
+		fout << m.get_release_year() << ',';
+		fout << (unsigned int)m.get_is_in_shopping_cart() << std::endl;
 	}
 	fout.close();
 }
@@ -130,7 +132,7 @@ Movie MovieRepositoryFile::update(const unsigned int id, const Movie & new_movie
 
 Movie MovieRepositoryFile::remove(const unsigned int id)
 {
-	load_from_file();
+	//load_from_file();
 	Movie deleted = MovieRepository::remove(id);
 	save_to_file();
 	return deleted;
