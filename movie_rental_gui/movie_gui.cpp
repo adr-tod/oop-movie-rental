@@ -411,10 +411,15 @@ void MainWindow::reload_table(const std::vector<Movie>& movies)
 		QTableWidgetItem* actor = new QTableWidgetItem(QString::fromStdString(m.get_actor()));
 		QTableWidgetItem* release_year = new QTableWidgetItem(QString::number(m.get_release_year()));
 		id->setTextAlignment(Qt::AlignCenter);
+		id->setTextColor("red");
 		title->setTextAlignment(Qt::AlignCenter);
+		title->setTextColor("indigo");
 		genre->setTextAlignment(Qt::AlignCenter);
+		genre->setTextColor("green");
 		actor->setTextAlignment(Qt::AlignCenter);
+		actor->setTextColor("blue");
 		release_year->setTextAlignment(Qt::AlignCenter);
+		release_year->setTextColor("orange");
 		table_movies->setItem(current_row, 0, id);
 		table_movies->setItem(current_row, 1, title);
 		table_movies->setItem(current_row, 2, genre);
