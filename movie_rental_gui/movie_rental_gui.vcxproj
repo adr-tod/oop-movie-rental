@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="movies.txt" />
+    <Text Include="opencppcoverage_config.txt" />
     <Text Include="test_movies.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

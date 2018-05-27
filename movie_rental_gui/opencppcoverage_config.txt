@@ -1,0 +1,5 @@
+excluded_sources=catch
+excluded_sources=test
+excluded_sources=main
+excluded_sources=movie_ui
+excluded_sources=movie_gui

@@ -28,6 +28,9 @@
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{7b6b366f-0dbe-4dd4-9c83-eaacf49174eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_console.cpp">
@@ -96,6 +99,9 @@
     </Text>
     <Text Include="test_movies.txt">
       <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="opencppcoverage_config.txt">
+      <Filter>Utilities</Filter>
     </Text>
   </ItemGroup>
 </Project>
