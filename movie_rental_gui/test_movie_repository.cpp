@@ -17,6 +17,9 @@ TEST_CASE("test dictionary repository", "[repository]")
 		// store inexistent movie
 		REQUIRE_NOTHROW(repository.store(Movie{ 4, "qwe", "qwe", "qwe", 2000 }));
 		REQUIRE_NOTHROW(repository.find(4));
+		// random exception
+		DictionaryRepository test{ 1.1 };
+		REQUIRE_THROWS(test.store(Movie{ 1, "qwe", "qwe", "qwe", 2000 }));
 	}
 
 	SECTION("test find")
@@ -114,10 +117,10 @@ TEST_CASE("test movie repository", "[repository]")
 	{
 		// delete existent movie
 		REQUIRE_NOTHROW(repository.find(2));
-		repository.remove(2);
-		REQUIRE_THROWS_AS(repository.find(2), RepositoryException);
+		REQUIRE_NOTHROW(repository.remove(2));
+		REQUIRE_THROWS(repository.find(2));
 		// delete inexistent movie
-		REQUIRE_THROWS_AS(repository.remove(5), RepositoryException);
+		REQUIRE_THROWS(repository.remove(5));
 	}
 
 	SECTION("test get_all")
@@ -203,17 +206,4 @@ TEST_CASE("test movie repository file", "[repository]")
 		// not empty anymore
 		REQUIRE(all_movies.size() == 10);
 	}
-
-	//SECTION("test raise exception if inexistent file")
-	//{
-	//	MovieRepositoryFile repository1{ "test_movies_inexistent.txt" };
-	//	try
-	//	{
-	//		repository.size();
-	//	}
-	//	catch (const std::system_error& ex)
-	//	{
-	//		REQUIRE(ex.code().message() == "da");
-	//	}
-	//}
 }
