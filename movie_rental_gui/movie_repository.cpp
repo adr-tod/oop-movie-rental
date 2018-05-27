@@ -35,11 +35,8 @@ Movie MovieRepository::update(const unsigned int id, const Movie& new_movie)
 
 Movie MovieRepository::remove(const unsigned int id)
 {
-	const size_t before_delete_size = movies.size();
-	Movie deleted = find(id);
+	Movie deleted = find(id); // raises ex if not found
 	movies.erase(std::remove_if(movies.begin(), movies.end(), [=](const Movie& movie) noexcept {return movie.get_id() == id; }), movies.end());
-	if (movies.size() == before_delete_size)
-		throw RepositoryException("No movie with given ID!");
 	return deleted;
 }
 
@@ -67,8 +64,6 @@ void MovieRepositoryFile::load_from_file()
 {
 	std::ifstream fin;
 	fin.open(file_name, std::ios::in);
-	if (fin.is_open() == false)
-		throw RepositoryException("Failed to open file!");
 	MovieRepository::clear();
 	std::string id, title, genre, actor, year, in; // in = is_in_shopping_cart
 	while (!fin.eof())
@@ -90,8 +85,6 @@ void MovieRepositoryFile::save_to_file()
 {
 	std::ofstream fout;
 	fout.open(file_name, std::ios::out);
-	if (fout.is_open() == false)
-		throw RepositoryException("Failed to open file!");
 	auto& all_movies = MovieRepository::get_all();
 	for (const auto& m : all_movies)
 	{
