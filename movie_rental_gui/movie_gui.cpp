@@ -7,6 +7,8 @@
 #include <QtWidgets/QVBoxLayout>
 #include <qlist.h>
 #include <qgroupbox.h>
+#include <qpainter.h>
+#include <QPaintEvent>
 
 #include <algorithm>
 #include <string>
@@ -117,6 +119,7 @@ void MainWindow::init_gui()
 	shopping_cart_buttons_layout_first_row->addWidget(button_shopping_cart_empty = new QPushButton("Empty"));
 	shopping_cart_buttons_layout_second_row->addWidget(button_shopping_cart_generate_random = new QPushButton("Generate random"));
 	shopping_cart_buttons_layout_second_row->addWidget(button_shopping_cart_show = new QPushButton("Show"));
+	shopping_cart_buttons_layout_second_row->addWidget(button_shopping_cart_show_rdonly = new QPushButton("Show RDONLY"));
 
 	rhs_layout->addWidget(shopping_cart_buttons);
 }
@@ -162,6 +165,7 @@ void MainWindow::connect_signals_slots()
 	QObject::connect(button_shopping_cart_empty, &QPushButton::clicked, this, &MainWindow::movie_shopping_cart_empty);
 	QObject::connect(button_shopping_cart_generate_random, &QPushButton::clicked, this, &MainWindow::movie_shopping_cart_generate_random);
 	QObject::connect(button_shopping_cart_show, &QPushButton::clicked, this, &MainWindow::movie_shopping_cart_show);
+	QObject::connect(button_shopping_cart_show_rdonly, &QPushButton::clicked, this, &MainWindow::movie_shopping_cart_show_rdonly);
 
 }
 
@@ -350,52 +354,24 @@ void MainWindow::movie_shopping_cart_generate_random()
 
 void MainWindow::movie_shopping_cart_show()
 {
-	auto movies = service.movie_get_all_cart();
-	if (movies.size() == 0) {
-		QMessageBox::warning(this, "Warning", "The shopping cart is empty!");
-	}
-	else {
-		table_shopping_cart = new QTableWidget;
-		table_shopping_cart->setMinimumWidth(625);
-		table_shopping_cart->setMinimumHeight(300);
-		table_shopping_cart->setColumnCount(5);
-		table_shopping_cart->setRowCount((int)movies.size());
-		table_shopping_cart->setColumnWidth(0, 30);
-		table_shopping_cart->setColumnWidth(1, 175);
-		table_shopping_cart->setColumnWidth(2, 125);
-		table_shopping_cart->setColumnWidth(4, 100);
-		table_shopping_cart->setHorizontalHeaderItem(0, new QTableWidgetItem("ID"));
-		table_shopping_cart->setHorizontalHeaderItem(1, new QTableWidgetItem("Title"));
-		table_shopping_cart->setHorizontalHeaderItem(2, new QTableWidgetItem("Genre"));
-		table_shopping_cart->setHorizontalHeaderItem(3, new QTableWidgetItem("Actor"));
-		table_shopping_cart->setHorizontalHeaderItem(4, new QTableWidgetItem("Year"));
-		int current_row = 0;
-		for (const auto& m : movies) {
-			QTableWidgetItem* id = new QTableWidgetItem(QString::number(m.get_id()));
-			QTableWidgetItem* title = new QTableWidgetItem(QString::fromStdString(m.get_title()));
-			QTableWidgetItem* genre = new QTableWidgetItem(QString::fromStdString(m.get_genre()));
-			QTableWidgetItem* actor = new QTableWidgetItem(QString::fromStdString(m.get_actor()));
-			QTableWidgetItem* release_year = new QTableWidgetItem(QString::number(m.get_release_year()));
-			id->setTextAlignment(Qt::AlignCenter);
-			title->setTextAlignment(Qt::AlignCenter);
-			genre->setTextAlignment(Qt::AlignCenter);
-			actor->setTextAlignment(Qt::AlignCenter);
-			release_year->setTextAlignment(Qt::AlignCenter);
-			table_shopping_cart->setItem(current_row, 0, id);
-			table_shopping_cart->setItem(current_row, 1, title);
-			table_shopping_cart->setItem(current_row, 2, genre);
-			table_shopping_cart->setItem(current_row, 3, actor);
-			table_shopping_cart->setItem(current_row, 4, release_year);
-			current_row++;
-		}
-		table_shopping_cart->show();
-	}
+	shopping_cart_window->show();
 }
 
-MainWindow::MainWindow(MovieService& service) : service{ service }
+void MainWindow::movie_shopping_cart_show_rdonly()
+{
+	shopping_cart_window_rdonly->show();
+}
+
+MainWindow::MainWindow(MovieService& service, ShoppingCartWindow* shopping_cart_window, ShoppingCartWindowRDONLY* shopping_cart_window_rdonly) : service{ service }, shopping_cart_window{ shopping_cart_window }, shopping_cart_window_rdonly{ shopping_cart_window_rdonly }
 {
 	init_gui();
 	connect_signals_slots();
+	reload_table(service.movie_get_all());
+	service.add_observer(this);
+}
+
+void MainWindow::update()
+{
 	reload_table(service.movie_get_all());
 }
 
@@ -411,10 +387,15 @@ void MainWindow::reload_table(const std::vector<Movie>& movies)
 		QTableWidgetItem* actor = new QTableWidgetItem(QString::fromStdString(m.get_actor()));
 		QTableWidgetItem* release_year = new QTableWidgetItem(QString::number(m.get_release_year()));
 		id->setTextAlignment(Qt::AlignCenter);
+		id->setTextColor("red");
 		title->setTextAlignment(Qt::AlignCenter);
+		title->setTextColor("indigo");
 		genre->setTextAlignment(Qt::AlignCenter);
+		genre->setTextColor("green");
 		actor->setTextAlignment(Qt::AlignCenter);
+		actor->setTextColor("blue");
 		release_year->setTextAlignment(Qt::AlignCenter);
+		release_year->setTextColor("orange");
 		table_movies->setItem(current_row, 0, id);
 		table_movies->setItem(current_row, 1, title);
 		table_movies->setItem(current_row, 2, genre);
@@ -422,4 +403,110 @@ void MainWindow::reload_table(const std::vector<Movie>& movies)
 		table_movies->setItem(current_row, 4, release_year);
 		current_row++;
 	}
+}
+
+void ShoppingCartWindow::init()
+{
+	// Main layout => LHS & RHS
+	QHBoxLayout* main_layout = new QHBoxLayout;
+	setLayout(main_layout);
+
+	// LHS
+	QWidget* lhs = new QWidget;
+	QVBoxLayout* lhs_layout = new QVBoxLayout;
+	lhs->setLayout(lhs_layout);
+
+	main_layout->addWidget(lhs);
+
+	// RHS
+	QWidget* rhs = new QWidget;
+	QVBoxLayout* rhs_layout = new QVBoxLayout;
+	rhs->setLayout(rhs_layout);
+
+	main_layout->addWidget(rhs);
+
+	// List
+	shopping_cart_list = new QListWidget;
+
+	lhs_layout->addWidget(shopping_cart_list);
+
+	// Buttons
+	button_generate_random = new QPushButton("Generate random");
+	button_empty = new QPushButton("Empty");
+
+	rhs_layout->addWidget(button_generate_random);
+	rhs_layout->addWidget(button_empty);
+}
+
+void ShoppingCartWindow::connect_signals_slots()
+{
+	QObject::connect(button_generate_random, &QPushButton::clicked, this, &ShoppingCartWindow::shopping_cart_generate_random);
+	QObject::connect(button_empty, &QPushButton::clicked, this, &ShoppingCartWindow::shopping_cart_empty);
+}
+
+void ShoppingCartWindow::reload_list(std::vector<Movie> movies)
+{
+	shopping_cart_list->clear();
+	for (const auto& m : movies) {
+		shopping_cart_list->addItem(new QListWidgetItem(QString::fromStdString(m.get_title())));
+	}
+}
+
+void ShoppingCartWindow::shopping_cart_generate_random()
+{
+	service.movie_generate_random_cart();
+	reload_list(service.movie_get_all_cart());
+	QMessageBox::information(this, "Succes", "Generated a random shopping cart");
+}
+
+void ShoppingCartWindow::shopping_cart_empty()
+{
+	service.movie_empty_cart();
+	reload_list(service.movie_get_all_cart());
+	QMessageBox::information(this, "Succes", "Cleared the shopping cart");
+}
+
+ShoppingCartWindow::ShoppingCartWindow(MovieService & service) :service{ service }
+{
+	init();
+	connect_signals_slots();
+	service.add_observer(this);
+}
+
+void ShoppingCartWindow::update()
+{
+	reload_list(service.movie_get_all_cart());
+}
+
+void ShoppingCartWindow::show()
+{
+	ShoppingCartWindow* window = new ShoppingCartWindow{ service };
+	window->QWidget::show();
+}
+
+void ShoppingCartWindowRDONLY::update()
+{
+	QWidget::update();
+}
+
+void ShoppingCartWindowRDONLY::show()
+{
+	ShoppingCartWindowRDONLY* window = new ShoppingCartWindowRDONLY{ service };
+	window->QWidget::show();
+}
+
+void ShoppingCartWindowRDONLY::paintEvent(QPaintEvent* e)
+{
+	e->rect(); // useless (had warning that e is not used)
+	QPainter p{ this };
+	for (auto i = 0; i < service.movie_size_cart(); i++) {
+		int x = rand() % (width() - 128) + 64; // such that image does not
+		int y = rand() % (height() - 128) + 64; // cross the window
+		p.drawImage(QPoint(x, y), QImage("smiley_face.jpg"));
+	}
+}
+
+ShoppingCartWindowRDONLY::ShoppingCartWindowRDONLY(MovieService & service) : service{ service }
+{
+	service.add_observer(this);
 }

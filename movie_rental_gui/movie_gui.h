@@ -12,10 +12,15 @@
 #include <vector>
 #include <qlabel.h>
 
+class ShoppingCartWindow;
+class ShoppingCartWindowRDONLY;
 
-class MainWindow : public QWidget {
-private:
-	MovieService & service;
+class MainWindow : public QWidget, public Observer {
+	// refs to linked windows
+	ShoppingCartWindow* shopping_cart_window;
+	ShoppingCartWindowRDONLY* shopping_cart_window_rdonly;
+
+	MovieService& service;
 	QTableWidget* table_movies;
 	QTableWidget* table_shopping_cart;
 	QLineEdit* text_id;
@@ -38,6 +43,7 @@ private:
 	QPushButton* button_shopping_cart_empty;
 	QPushButton* button_shopping_cart_generate_random;
 	QPushButton* button_shopping_cart_show;
+	QPushButton* button_shopping_cart_show_rdonly;
 	void init_gui();
 	void connect_signals_slots();
 	void reload_table(const std::vector<Movie>& movies);
@@ -53,6 +59,35 @@ private:
 	void movie_shopping_cart_empty();
 	void movie_shopping_cart_generate_random();
 	void movie_shopping_cart_show();
+	void movie_shopping_cart_show_rdonly();
 public:
-	MainWindow(MovieService& service);
+	MainWindow(MovieService& service, ShoppingCartWindow* shopping_cart_window, ShoppingCartWindowRDONLY* shopping_cart_window_rdonly);
+	void update() override;
+};
+
+
+class ShoppingCartWindow : public QWidget, public Observer {
+	MovieService& service;
+	QListWidget* shopping_cart_list;
+	QPushButton* button_generate_random;
+	QPushButton* button_empty;
+	void init();
+	void connect_signals_slots();
+	void reload_list(std::vector<Movie> movies);
+	void shopping_cart_generate_random();
+	void shopping_cart_empty();
+public:
+	ShoppingCartWindow(MovieService& service);
+	void update() override;
+	void show();
+};
+
+
+class ShoppingCartWindowRDONLY :public QWidget, public Observer {
+	MovieService& service;
+	void paintEvent(QPaintEvent* e) override;
+public:
+	ShoppingCartWindowRDONLY(MovieService& service);
+	void update() override;
+	void show();
 };

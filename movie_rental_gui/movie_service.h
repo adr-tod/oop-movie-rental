@@ -2,12 +2,13 @@
 
 #include "movie_repository.h"
 #include "movie_validator.h"
+#include "Observer.h"
 
 #include <memory>
 
 class UndoAction;
 
-class MovieService
+class MovieService: public Observable
 {
 private:
 	Repository<Movie>* repository;

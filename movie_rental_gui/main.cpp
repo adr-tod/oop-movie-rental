@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
 
 	// RUN APP
 	QApplication a(argc, argv);
-	//a.setStyle("fusion");
 
 	Repository<Movie>* repository = new MovieRepository;
 	MovieValidator validator;
@@ -24,8 +23,10 @@ int main(int argc, char *argv[])
 	add_some_movies(service);
 	//MovieUI ui{ service };
 	//ui.start();
-	MainWindow gui{ service };
-	gui.show();
+	ShoppingCartWindow* shopping_cart_window = new ShoppingCartWindow{ service };
+	ShoppingCartWindowRDONLY* shopping_cart_window_rdonly = new ShoppingCartWindowRDONLY{ service };
+	MainWindow* main_window = new MainWindow{ service, shopping_cart_window, shopping_cart_window_rdonly };
+	main_window->show();
 
 	return a.exec();
 }

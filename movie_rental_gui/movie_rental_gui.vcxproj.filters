@@ -28,6 +28,9 @@
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{7b6b366f-0dbe-4dd4-9c83-eaacf49174eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_console.cpp">
@@ -89,6 +92,9 @@
     <ClInclude Include="catch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="movies.txt">
@@ -97,5 +103,13 @@
     <Text Include="test_movies.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="opencppcoverage_config.txt">
+      <Filter>Utilities</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="smiley_face.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
