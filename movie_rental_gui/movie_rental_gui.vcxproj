@@ -138,11 +138,15 @@
     <ClInclude Include="movie_service.h" />
     <ClInclude Include="movie_ui.h" />
     <ClInclude Include="movie_validator.h" />
+    <ClInclude Include="Observer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="movies.txt" />
     <Text Include="opencppcoverage_config.txt" />
     <Text Include="test_movies.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="smiley_face.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

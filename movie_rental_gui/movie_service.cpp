@@ -9,6 +9,7 @@ void MovieService::movie_add(const unsigned int id, const std::string & title, c
 	validator.validate(to_add);
 	repository->store(to_add);
 	undo_actions.push_back(std::make_unique<UndoAdd>(to_add, repository));
+	notify_observers();
 }
 
 Movie& MovieService::movie_find(const unsigned int id)
@@ -22,12 +23,14 @@ void MovieService::movie_update(const unsigned int id, const std::string & new_t
 	validator.validate(new_movie);
 	Movie original = repository->update(id, new_movie);
 	undo_actions.push_back(std::make_unique<UndoUpdate>(original, repository));
+	notify_observers();
 }
 
 void MovieService::movie_delete(const unsigned int id)
 {
 	Movie deleted = repository->remove(id);
 	undo_actions.push_back(std::make_unique<UndoDelete>(deleted, repository));
+	notify_observers();
 }
 
 void MovieService::movie_undo()
@@ -36,6 +39,7 @@ void MovieService::movie_undo()
 		throw RepositoryException{ "There's nothing to undo!" };
 	undo_actions.back()->do_undo();
 	undo_actions.pop_back();
+	notify_observers();
 }
 
 bool compare_by_id_asc(const Movie& movie1, const Movie& movie2) noexcept
@@ -140,6 +144,7 @@ void MovieService::movie_add_to_cart(const unsigned int id)
 	Movie& to_add = repository->find(id);
 	// mark it's in
 	to_add.set_is_in_shopping_cart(true);
+	notify_observers();
 }
 
 void MovieService::movie_remove_from_cart(const unsigned int id)
@@ -148,6 +153,7 @@ void MovieService::movie_remove_from_cart(const unsigned int id)
 	Movie& to_remove = repository->find(id);
 	// mark it's out
 	to_remove.set_is_in_shopping_cart(false);
+	notify_observers();
 }
 
 size_t MovieService::movie_size_cart()
@@ -161,6 +167,7 @@ void MovieService::movie_empty_cart()
 	auto& all_movies = repository->get_all();
 	// change is_in_shopping_cart to false for each movie
 	std::for_each(all_movies.begin(), all_movies.end(), [](Movie& movie) noexcept {movie.set_is_in_shopping_cart(false); });
+	notify_observers();
 }
 
 std::vector<Movie> MovieService::movie_get_all_cart()
@@ -195,6 +202,8 @@ void MovieService::movie_generate_random_cart()
 			how_many--;
 		}
 	}
+
+	notify_observers();
 }
 
 UndoAdd::UndoAdd(const Movie& added, Repository<Movie>* repository) : added{ added }, repository{ repository }
@@ -222,4 +231,14 @@ UndoDelete::UndoDelete(const Movie& deleted, Repository<Movie>* repository) : de
 void UndoDelete::do_undo()
 {
 	repository->store(deleted);
+}
+
+void Observable::notify_observers()
+{
+	std::for_each(observers.begin(), observers.end(), [](Observer* o) {o->update(); });
+}
+
+void Observable::add_observer(Observer * o)
+{
+	observers.push_back(o);
 }
