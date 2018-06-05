@@ -132,6 +132,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch.hpp" />
+    <ClInclude Include="custom_list_model.h" />
+    <ClInclude Include="custom_table_model.h" />
     <ClInclude Include="movie.h" />
     <ClInclude Include="movie_gui.h" />
     <ClInclude Include="movie_repository.h" />

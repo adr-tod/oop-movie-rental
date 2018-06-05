@@ -2,6 +2,8 @@
 
 #include "movie.h"
 #include "movie_service.h"
+#include "custom_list_model.h"
+#include "custom_table_model.h"
 
 #include <qwidget.h>
 #include <qlistwidget.h>
@@ -21,8 +23,8 @@ class MainWindow : public QWidget, public Observer {
 	ShoppingCartWindowRDONLY* shopping_cart_window_rdonly;
 
 	MovieService& service;
-	QTableWidget* table_movies;
-	QTableWidget* table_shopping_cart;
+	QTableView* table_movies;
+	MyTableModel* table_movies_model;
 	QLineEdit* text_id;
 	QLineEdit* text_title;
 	QLineEdit* text_genre;
@@ -68,7 +70,8 @@ public:
 
 class ShoppingCartWindow : public QWidget, public Observer {
 	MovieService& service;
-	QListWidget* shopping_cart_list;
+	QListView* shopping_cart_list;
+	MyListModel* shopping_cart_list_model;
 	QPushButton* button_generate_random;
 	QPushButton* button_empty;
 	void init();

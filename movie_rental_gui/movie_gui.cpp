@@ -31,17 +31,19 @@ void MainWindow::init_gui()
 	main_layout->addWidget(lhs);
 
 	// movies table
-	table_movies = new QTableWidget;
-	table_movies->setColumnCount(5);
-	table_movies->setColumnWidth(0, 30);
-	table_movies->setColumnWidth(1, 175);
-	table_movies->setColumnWidth(2, 125);
-	table_movies->setColumnWidth(4, 100);
-	table_movies->setHorizontalHeaderItem(0, new QTableWidgetItem("ID"));
-	table_movies->setHorizontalHeaderItem(1, new QTableWidgetItem("Title"));
-	table_movies->setHorizontalHeaderItem(2, new QTableWidgetItem("Genre"));
-	table_movies->setHorizontalHeaderItem(3, new QTableWidgetItem("Actor"));
-	table_movies->setHorizontalHeaderItem(4, new QTableWidgetItem("Year"));
+	table_movies = new QTableView;
+	table_movies_model = new MyTableModel;
+	table_movies->setModel(table_movies_model);
+	//table_movies->setColumnCount(5);
+	//table_movies->setColumnWidth(0, 30);
+	//table_movies->setColumnWidth(1, 175);
+	//table_movies->setColumnWidth(2, 125);
+	//table_movies->setColumnWidth(4, 100);
+	//table_movies->setHorizontalHeaderItem(0, new QTableWidgetItem("ID"));
+	//table_movies->setHorizontalHeaderItem(1, new QTableWidgetItem("Title"));
+	//table_movies->setHorizontalHeaderItem(2, new QTableWidgetItem("Genre"));
+	//table_movies->setHorizontalHeaderItem(3, new QTableWidgetItem("Actor"));
+	//table_movies->setHorizontalHeaderItem(4, new QTableWidgetItem("Year"));
 
 	lhs_layout->addWidget(table_movies);
 
@@ -377,32 +379,33 @@ void MainWindow::update()
 
 void MainWindow::reload_table(const std::vector<Movie>& movies)
 {
-	table_movies->clearContents();
-	table_movies->setRowCount((int)movies.size());
-	int current_row = 0;
-	for (const auto& m : movies) {
-		QTableWidgetItem* id = new QTableWidgetItem(QString::number(m.get_id()));
-		QTableWidgetItem* title = new QTableWidgetItem(QString::fromStdString(m.get_title()));
-		QTableWidgetItem* genre = new QTableWidgetItem(QString::fromStdString(m.get_genre()));
-		QTableWidgetItem* actor = new QTableWidgetItem(QString::fromStdString(m.get_actor()));
-		QTableWidgetItem* release_year = new QTableWidgetItem(QString::number(m.get_release_year()));
-		id->setTextAlignment(Qt::AlignCenter);
-		id->setTextColor("red");
-		title->setTextAlignment(Qt::AlignCenter);
-		title->setTextColor("indigo");
-		genre->setTextAlignment(Qt::AlignCenter);
-		genre->setTextColor("green");
-		actor->setTextAlignment(Qt::AlignCenter);
-		actor->setTextColor("blue");
-		release_year->setTextAlignment(Qt::AlignCenter);
-		release_year->setTextColor("orange");
-		table_movies->setItem(current_row, 0, id);
-		table_movies->setItem(current_row, 1, title);
-		table_movies->setItem(current_row, 2, genre);
-		table_movies->setItem(current_row, 3, actor);
-		table_movies->setItem(current_row, 4, release_year);
-		current_row++;
-	}
+	//table_movies->clearContents();
+	//table_movies->setRowCount((int)movies.size());
+	//int current_row = 0;
+	//for (const auto& m : movies) {
+	//	QTableWidgetItem* id = new QTableWidgetItem(QString::number(m.get_id()));
+	//	QTableWidgetItem* title = new QTableWidgetItem(QString::fromStdString(m.get_title()));
+	//	QTableWidgetItem* genre = new QTableWidgetItem(QString::fromStdString(m.get_genre()));
+	//	QTableWidgetItem* actor = new QTableWidgetItem(QString::fromStdString(m.get_actor()));
+	//	QTableWidgetItem* release_year = new QTableWidgetItem(QString::number(m.get_release_year()));
+	//	id->setTextAlignment(Qt::AlignCenter);
+	//	id->setTextColor("red");
+	//	title->setTextAlignment(Qt::AlignCenter);
+	//	title->setTextColor("indigo");
+	//	genre->setTextAlignment(Qt::AlignCenter);
+	//	genre->setTextColor("green");
+	//	actor->setTextAlignment(Qt::AlignCenter);
+	//	actor->setTextColor("blue");
+	//	release_year->setTextAlignment(Qt::AlignCenter);
+	//	release_year->setTextColor("orange");
+	//	table_movies->setItem(current_row, 0, id);
+	//	table_movies->setItem(current_row, 1, title);
+	//	table_movies->setItem(current_row, 2, genre);
+	//	table_movies->setItem(current_row, 3, actor);
+	//	table_movies->setItem(current_row, 4, release_year);
+	//	current_row++;
+	//}
+	table_movies_model->set_movies(movies);
 }
 
 void ShoppingCartWindow::init()
@@ -426,7 +429,9 @@ void ShoppingCartWindow::init()
 	main_layout->addWidget(rhs);
 
 	// List
-	shopping_cart_list = new QListWidget;
+	shopping_cart_list = new QListView;
+	shopping_cart_list_model = new MyListModel;
+	shopping_cart_list->setModel(shopping_cart_list_model);
 
 	lhs_layout->addWidget(shopping_cart_list);
 
@@ -446,10 +451,11 @@ void ShoppingCartWindow::connect_signals_slots()
 
 void ShoppingCartWindow::reload_list(std::vector<Movie> movies)
 {
-	shopping_cart_list->clear();
-	for (const auto& m : movies) {
-		shopping_cart_list->addItem(new QListWidgetItem(QString::fromStdString(m.get_title())));
-	}
+	//shopping_cart_list->clear();
+	//for (const auto& m : movies) {
+	//	shopping_cart_list->addItem(new QListWidgetItem(QString::fromStdString(m.get_title())));
+	//}
+	shopping_cart_list_model->set_movies(movies);
 }
 
 void ShoppingCartWindow::shopping_cart_generate_random()
@@ -470,6 +476,7 @@ ShoppingCartWindow::ShoppingCartWindow(MovieService & service) :service{ service
 {
 	init();
 	connect_signals_slots();
+	reload_list(service.movie_get_all_cart());
 	service.add_observer(this);
 }
 
