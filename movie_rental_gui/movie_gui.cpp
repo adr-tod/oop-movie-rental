@@ -169,6 +169,8 @@ void MainWindow::connect_signals_slots()
 	QObject::connect(button_shopping_cart_show, &QPushButton::clicked, this, &MainWindow::movie_shopping_cart_show);
 	QObject::connect(button_shopping_cart_show_rdonly, &QPushButton::clicked, this, &MainWindow::movie_shopping_cart_show_rdonly);
 
+	// Display history when item selected
+	QObject::connect(table_movies->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::table_movies_selection_changed);
 }
 
 void MainWindow::movie_add()
@@ -406,6 +408,13 @@ void MainWindow::reload_table(const std::vector<Movie>& movies)
 	//	current_row++;
 	//}
 	table_movies_model->set_movies(movies);
+}
+
+void MainWindow::table_movies_selection_changed()
+{
+	auto selected = table_movies->selectionModel()->selectedIndexes();
+	auto selected_item = selected.at(0);
+	QMessageBox::information(this, "History", QString::fromStdString(service.movie_get_history((unsigned int)selected_item.data().toInt())));
 }
 
 void ShoppingCartWindow::init()

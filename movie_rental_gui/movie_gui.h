@@ -49,6 +49,7 @@ class MainWindow : public QWidget, public Observer {
 	void init_gui();
 	void connect_signals_slots();
 	void reload_table(const std::vector<Movie>& movies);
+	void table_movies_selection_changed();
 	void movie_add();
 	void movie_find();
 	void movie_update();

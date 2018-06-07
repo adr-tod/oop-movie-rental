@@ -21,6 +21,8 @@ void MovieService::movie_update(const unsigned int id, const std::string & new_t
 {
 	Movie new_movie{ id, new_title, new_genre, new_actor, new_release_year };
 	validator.validate(new_movie);
+	new_movie.set_history(repository->find(id).get_history());
+	new_movie.add_to_history("Updated to " + new_title + " / " + new_genre + " / " + new_actor + " / " + std::to_string(new_release_year));
 	Movie original = repository->update(id, new_movie);
 	undo_actions.push_back(std::make_unique<UndoUpdate>(original, repository));
 	notify_observers();
@@ -29,6 +31,7 @@ void MovieService::movie_update(const unsigned int id, const std::string & new_t
 void MovieService::movie_delete(const unsigned int id)
 {
 	Movie deleted = repository->remove(id);
+	deleted.add_to_history("REMOVED");
 	undo_actions.push_back(std::make_unique<UndoDelete>(deleted, repository));
 	notify_observers();
 }
@@ -40,6 +43,11 @@ void MovieService::movie_undo()
 	undo_actions.back()->do_undo();
 	undo_actions.pop_back();
 	notify_observers();
+}
+
+std::string MovieService::movie_get_history(const unsigned int id)
+{
+	return repository->find(id).get_history();
 }
 
 bool compare_by_id_asc(const Movie& movie1, const Movie& movie2) noexcept

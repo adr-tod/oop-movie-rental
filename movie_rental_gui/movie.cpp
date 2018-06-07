@@ -2,6 +2,7 @@
 
 Movie::Movie(const unsigned int id, const std::string& title, const std::string& genre, const std::string& actor, const unsigned int release_year) noexcept : id{ id }, title{ title }, genre{ genre }, actor{ actor }, release_year{ release_year }, is_in_shopping_cart{ false } 
 {
+	add_to_history("Initial: " + std::to_string(id) + " / " + title + " / " + genre + " / " + actor + " / " + std::to_string(release_year));
 }
 
 Movie::Movie(const unsigned int id, const std::string & title, const std::string & genre, const std::string & actor, const unsigned int release_year, const unsigned int is_in_shopping_cart) noexcept : id{ id }, title{ title }, genre{ genre }, actor{ actor }, release_year{ release_year }, is_in_shopping_cart{ (bool)is_in_shopping_cart }
@@ -61,6 +62,22 @@ unsigned int Movie::set_release_year(const unsigned int new_year) noexcept
 {
 	release_year = new_year;
 	return release_year;
+}
+
+std::string Movie::get_history() const noexcept
+{
+	return history;
+}
+
+std::string Movie::set_history(const std::string & new_history) noexcept
+{
+	history = new_history;
+	return history;
+}
+
+void Movie::add_to_history(const std::string & event) noexcept
+{
+	history += event + "\n";
 }
 
 bool Movie::get_is_in_shopping_cart() const noexcept

@@ -21,6 +21,7 @@ public:
 	void movie_update(const unsigned int id, const std::string& new_title, const std::string& new_genre, const std::string& new_actor, const unsigned int new_release_year);
 	void movie_delete(const unsigned int id);
 	void movie_undo();
+	std::string movie_get_history(const unsigned int id);
 	std::vector<Movie>& movie_get_all() noexcept;
 	std::vector<Movie> movie_get_all_filtered_by_title(const std::string filter);
 	std::vector<Movie> movie_get_all_filtered_by_release_year(const unsigned int filter);

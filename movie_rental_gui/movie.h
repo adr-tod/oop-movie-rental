@@ -11,6 +11,7 @@ private:
 	std::string actor;
 	unsigned int release_year;
 	bool is_in_shopping_cart;
+	std::string history;
 public:
 	Movie(const unsigned int id, const std::string& title, const std::string& genre, const std::string& actor, const unsigned int release_year) noexcept;
 	Movie(const unsigned int id, const std::string& title, const std::string& genre, const std::string& actor, const unsigned int release_year, const unsigned int is_in_shopping_cart) noexcept;
@@ -24,6 +25,9 @@ public:
 	std::string set_actor(const std::string& new_actor) noexcept;
 	unsigned int get_release_year() const noexcept;
 	unsigned int set_release_year(const unsigned int new_year) noexcept;
+	std::string get_history() const noexcept;
+	std::string set_history(const std::string& new_history) noexcept;
+	void add_to_history(const std::string& event) noexcept;
 	bool get_is_in_shopping_cart() const noexcept;
 	bool set_is_in_shopping_cart(const bool new_status) noexcept;
 	bool operator==(const Movie& other) const noexcept;
